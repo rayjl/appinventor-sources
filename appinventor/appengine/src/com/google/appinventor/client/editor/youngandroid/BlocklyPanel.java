@@ -550,8 +550,6 @@ public class BlocklyPanel extends HTMLPanel {
     }
   }
 
-
-
   /**
    * Get Yail code for current blocks workspace
    *
@@ -905,6 +903,17 @@ public class BlocklyPanel extends HTMLPanel {
   }-*/;
 
   public static native String doGetYail(String formName, String formJson, String packageName) /*-{
+    $wnd.console.log("getYail test");
+    $wnd.console.log($wnd.Blocklies.Javascript);
+    $wnd.console.log("Blocklies.Javascript test");
+    $wnd.console.log($wnd.Blockly);
+    $wnd.console.log("Blockly test");
+    $wnd.console.log($wnd.BlocklyEditor);
+    $wnd.console.log("Blockly Editor test");
+    $wnd.console.log($wnd.Blocks);
+    $wnd.console.log("Blocks test");
+    var code = $wnd.Blocklies[formName].Javascript.workspaceToCode();
+    $wnd.console.log(code);
     return $wnd.Blocklies[formName].Yail.getFormYail(formJson, packageName);
   }-*/;
 
