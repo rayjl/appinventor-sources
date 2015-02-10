@@ -38,6 +38,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.lang.Object;
+import java.io.PrintWriter;
+
 import static com.google.appinventor.client.Ode.MESSAGES;
 
 /**
@@ -567,6 +570,19 @@ public class BlocklyPanel extends HTMLPanel {
     }
   }
 
+
+  public String getJavaScript() {
+    String code = doGetJavaScript(formName);
+    try {
+      PrintWriter out = new PrintWriter("out.js");
+      out.println(code);
+      out.close();
+    } catch (IOException e) {}
+    return code;
+  }
+
+
+
   /**
    * Send component data (json and form name) to Blockly for building
    * yail for the REPL.
@@ -903,20 +919,17 @@ public class BlocklyPanel extends HTMLPanel {
   }-*/;
 
   public static native String doGetYail(String formName, String formJson, String packageName) /*-{
-    $wnd.console.log("getYail test");
-    $wnd.console.log($wnd.Blocklies.JavaScript);
-    $wnd.console.log("Blocklies.Javascript test");
-    $wnd.console.log($wnd.Blockly);
-    $wnd.console.log("Blockly test");
-    $wnd.console.log($wnd.BlocklyEditor);
-    $wnd.console.log("Blockly Editor test");
-    $wnd.console.log($wnd.Blocks);
-    $wnd.console.log("Blocks test");
-    var code = $wnd.Blocklies[formName].JavaScript.workspaceToCode();
-    $wnd.console.log(code);
-    $wnd.console.log("code fetch test");
+    $wnd.console.log($wnd.Blocklies[formName].Yail.getFormYail(formJson, packageName));
     return $wnd.Blocklies[formName].Yail.getFormYail(formJson, packageName);
   }-*/;
+
+
+  public static native String doGetJavaScript(String formName) /*-{
+    var code = $wnd.Blocklies[formName].JavaScript.workspaceToCode();
+    $wnd.console.log(code);
+    return code;
+  }-*/;
+
 
   public static native void doSendJson(String formName, String formJson, String packageName) /*-{
     $wnd.Blocklies[formName].ReplMgr.sendFormData(formJson, packageName);

@@ -30,6 +30,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import java.lang.Object;
+import java.io.*;
+
 /**
  * Manager class for opened project editors.
  *
@@ -316,7 +319,6 @@ public final class EditorManager {
         break;
       }
     }
-   
     Ode.getInstance().getProjectService().save(Ode.getInstance().getSessionId(),
         yailFiles,
         new OdeAsyncCallback<Long>(MESSAGES.saveErrorMultipleFiles()) {
@@ -336,6 +338,79 @@ public final class EditorManager {
       }
     });
   }
+
+
+
+
+  public void generateJavaScriptForBlocksEditors(final Command successCommand, 
+      final Command failureCommand) {
+    List<FileDescriptorWithContent> JSFiles =  new ArrayList<FileDescriptorWithContent>();
+    long currentProjectId = Ode.getInstance().getCurrentYoungAndroidProjectId();
+    for (long projectId : openProjectEditors.keySet()) {
+      if (projectId == currentProjectId) {
+        // Generate yail for each blocks editor in this project and add it to the list of 
+        // yail files. If an error occurs we stop the generation process, report the error, 
+        // and return without executing nextCommand.
+        ProjectEditor projectEditor = openProjectEditors.get(projectId);
+        for (FileEditor fileEditor : projectEditor.getOpenFileEditors()) {
+          if (fileEditor instanceof YaBlocksEditor) {
+            YaBlocksEditor yaBlocksEditor = (YaBlocksEditor) fileEditor;
+            try {
+              JSFiles.add(yaBlocksEditor.getJavaScript());
+            } catch (YailGenerationException e) {
+              ErrorReporter.reportInfo(MESSAGES.yailGenerationError(e.getFormName(), 
+                  e.getMessage()));
+              if (failureCommand != null) {
+                failureCommand.execute();
+              }
+              return;
+            }
+          }
+        }
+        break;
+      }
+    }
+
+
+    // try {
+    //   PrintWriter listOut = new PrintWriter("listOut.js");
+    //   listOut.println(JSFiles);
+    //   listOut.close();
+
+    //   PrintWriter eachOut = new PrintWriter("eachOut.js");
+    //   for (FileDescriptorWithContent JSFile : JSFiles) {
+    //     eachOut.println(JSFile);
+    //   }
+    //   eachOut.close();
+
+    //   PrintWriter contentOut = new PrintWriter("contentOut.js");
+    //   for (FileDescriptorWithContent JSFile : JSFiles) {
+    //     contentOut.println(JSFile.getContent());
+    //   }
+    //   contentOut.close();
+    // } catch (IOException e) {}
+
+
+    Ode.getInstance().getProjectService().save(Ode.getInstance().getSessionId(),
+        JSFiles,
+        new OdeAsyncCallback<Long>(MESSAGES.saveErrorMultipleFiles()) {
+      @Override
+      public void onSuccess(Long date) {
+        if (successCommand != null) {
+          successCommand.execute();
+        }
+      }
+      
+      @Override
+      public void onFailure(Throwable caught) {
+        super.onFailure(caught);
+        if (failureCommand != null) {
+          failureCommand.execute();
+        }
+      }
+    });
+  }
+
 
 
   /**

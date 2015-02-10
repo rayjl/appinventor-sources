@@ -349,6 +349,15 @@ public final class YaBlocksEditor extends FileEditor
             packageNameFromPath(getFileId())));
   }
 
+
+
+  public FileDescriptorWithContent getJavaScript() throws YailGenerationException {
+    return new FileDescriptorWithContent(getProjectId(), yailFileName(),
+        blocksArea.getJavaScript());
+  }
+
+
+
   /**
    * Converts a source file path (e.g.,
    * src/com/gmail/username/project1/Form.extension) into a package
