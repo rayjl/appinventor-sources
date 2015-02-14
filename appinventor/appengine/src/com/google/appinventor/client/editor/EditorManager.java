@@ -370,27 +370,6 @@ public final class EditorManager {
         break;
       }
     }
-
-
-    // try {
-    //   PrintWriter listOut = new PrintWriter("listOut.js");
-    //   listOut.println(JSFiles);
-    //   listOut.close();
-
-    //   PrintWriter eachOut = new PrintWriter("eachOut.js");
-    //   for (FileDescriptorWithContent JSFile : JSFiles) {
-    //     eachOut.println(JSFile);
-    //   }
-    //   eachOut.close();
-
-    //   PrintWriter contentOut = new PrintWriter("contentOut.js");
-    //   for (FileDescriptorWithContent JSFile : JSFiles) {
-    //     contentOut.println(JSFile.getContent());
-    //   }
-    //   contentOut.close();
-    // } catch (IOException e) {}
-
-
     Ode.getInstance().getProjectService().save(Ode.getInstance().getSessionId(),
         JSFiles,
         new OdeAsyncCallback<Long>(MESSAGES.saveErrorMultipleFiles()) {

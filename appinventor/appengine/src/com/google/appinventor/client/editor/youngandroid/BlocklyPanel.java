@@ -571,13 +571,13 @@ public class BlocklyPanel extends HTMLPanel {
   }
 
 
-  public String getJavaScript() {
-    String code = doGetJavaScript(formName);
-    try {
-      PrintWriter out = new PrintWriter("out.js");
-      out.println(code);
-      out.close();
-    } catch (IOException e) {}
+  public String getJavaScript(String formJson, String packageName) {
+    String code = doGetJavaScript(formName, formJson, packageName);
+    // try {
+    //   PrintWriter out = new PrintWriter("out.js");
+    //   out.println(code);
+    //   out.close();
+    // } catch (IOException e) {}
     return code;
   }
 
@@ -924,8 +924,8 @@ public class BlocklyPanel extends HTMLPanel {
   }-*/;
 
 
-  public static native String doGetJavaScript(String formName) /*-{
-    var code = $wnd.Blocklies[formName].JavaScript.workspaceToCode();
+  public static native String doGetJavaScript(String formName, String formJson, String packageName) /*-{
+    var code = $wnd.Blocklies[formName].JavaScript.getFormJavaScript(formJson, packageName);
     $wnd.console.log(code);
     return code;
   }-*/;
