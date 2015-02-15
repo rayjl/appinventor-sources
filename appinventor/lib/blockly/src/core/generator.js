@@ -85,6 +85,10 @@ Blockly.Generator.prototype.workspaceToCode = function() {
       code.push(line);
     }
   }
+  // Return it here so that code can be updated with 
+  // additional information in javascript.js and finalized there
+  return code;
+
   code = code.join('\n');  // Blank line between each section.
   code = this.finish(code);
   // Final scrubbing of whitespace.
