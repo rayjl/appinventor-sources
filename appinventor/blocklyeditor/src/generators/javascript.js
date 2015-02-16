@@ -246,14 +246,20 @@ Blockly.JavaScript.getFormJavaScript = function(formJson, packageName, forRepl) 
 
   // Generate a map of the components
   var componentMap = Blockly.Component.buildComponentMap([], [], false, false);
+  console.log(componentMap);
   
   for (var comp in componentMap.components)
     componentNames.push(comp);
 
   // Global blocks
   var globalBlocks = componentMap.globals;
+  for (var i = 0, block; block = globalBlocks[i]; i++) {
+    code.push(this.blockToCode(block));
+  }
 
-  var code = this.workspaceToCode();
+  // var code = this.workspaceToCode();
+
+  return code;
 
   // If form properties exist execute this section
   if (formProperties) {
