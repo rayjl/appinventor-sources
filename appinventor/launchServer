@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Terminate with:
+# ps aux | grep 8888
+# kill -9 <PID>
+
+# Launches build server
+cd /Users/Ray/documents/programming-work/appinventor-sources/appinventor/buildserver
+ant RunLocalBuildServer > ../../buildserver-log.out &

@@ -110,6 +110,7 @@
     "./src/generators/yail/procedures.js",
     
     // generator files for JavaScript
+    //"./src/generators/javascript/all.js",
     "./src/generators/javascript.js",
     "./src/generators/javascript/colour.js",
     "./src/generators/javascript/lists.js",

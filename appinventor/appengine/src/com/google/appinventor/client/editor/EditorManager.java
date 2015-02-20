@@ -341,7 +341,7 @@ public final class EditorManager {
 
 
 
-
+  // Almost exact copy as the one thats at the top
   public void generateJavaScriptForBlocksEditors(final Command successCommand, 
       final Command failureCommand) {
     List<FileDescriptorWithContent> JSFiles =  new ArrayList<FileDescriptorWithContent>();
@@ -357,6 +357,8 @@ public final class EditorManager {
             YaBlocksEditor yaBlocksEditor = (YaBlocksEditor) fileEditor;
             try {
               JSFiles.add(yaBlocksEditor.getJavaScript());
+              // Attempted to log 
+              OdeLog.log(JSFiles.toString());
             } catch (YailGenerationException e) {
               ErrorReporter.reportInfo(MESSAGES.yailGenerationError(e.getFormName(), 
                   e.getMessage()));

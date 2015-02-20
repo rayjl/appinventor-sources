@@ -350,7 +350,7 @@ public final class YaBlocksEditor extends FileEditor
   }
 
 
-
+  // Just added this to handle the javascript generation route
   public FileDescriptorWithContent getJavaScript() throws YailGenerationException {
     return new FileDescriptorWithContent(getProjectId(), yailFileName(),
         blocksArea.getJavaScript(myFormEditor.encodeFormAsJsonString(),
