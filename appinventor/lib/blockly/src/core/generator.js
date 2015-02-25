@@ -137,18 +137,15 @@ Blockly.Generator.prototype.allNestedComments = function(block) {
  */
 Blockly.Generator.prototype.blockToCode = function(block) {
   if (!block) {
-    console.log('Not a block.');
     return '';
   }
   if (block.disabled) {
     // Skip past this block if it is disabled.
-    console.log('Block disabled.');
     return this.blockToCode(block.getNextBlock());
   }
 
   var func = this[block.type];
   if (!func) {
-    console.log('Not a function. Error will be thrown.');
     throw 'Language "' + this.name_ + '" does not know how to generate code ' +
         'for block type "' + block.type + '".';
   }
@@ -170,7 +167,6 @@ Blockly.Generator.prototype.blockToCode = function(block) {
     // Block has handled code generation itself.
     return '';
   } else {
-    console.log('Invalid code generated.');
     throw 'Invalid code generated: ' + code;
   }
 };

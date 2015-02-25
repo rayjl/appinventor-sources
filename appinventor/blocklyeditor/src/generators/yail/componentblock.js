@@ -41,7 +41,7 @@ Blockly.Yail.component_event = function() {
     + Blockly.Yail.YAIL_OPEN_COMBINATION
     // TODO: formal params go here
     + this.declaredNames()
-          .map(function (name) {return Blockly.bv .YAIL_LOCAL_VAR_TAG+name;})
+          .map(function (name) {return Blockly.Yail.YAIL_LOCAL_VAR_TAG+name;})
           .join(' ')
     + Blockly.Yail.YAIL_CLOSE_COMBINATION
     + Blockly.Yail.YAIL_SET_THIS_FORM

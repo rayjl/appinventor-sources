@@ -122,19 +122,17 @@ public final class YoungAndroidProjectService extends CommonProjectService {
   /**
    * Returns project settings that can be used when creating a new project.
    */
-  public static String getProjectSettings(String icon, String vCode, String vName, String useslocation, String aName) {
+  public static String getProjectSettings(String icon, String vCode, String vName, String useslocation) {
     icon = Strings.nullToEmpty(icon);
     vCode = Strings.nullToEmpty(vCode);
     vName = Strings.nullToEmpty(vName);
     useslocation = Strings.nullToEmpty(useslocation);
-    aName = Strings.nullToEmpty(aName);
     return "{\"" + SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS + "\":{" +
         "\"" + SettingsConstants.YOUNG_ANDROID_SETTINGS_ICON + "\":\"" +
         icon + "\",\"" + SettingsConstants.YOUNG_ANDROID_SETTINGS_VERSION_CODE +
         "\":\"" + vCode +"\",\"" + SettingsConstants.YOUNG_ANDROID_SETTINGS_VERSION_NAME +
         "\":\"" + vName + "\",\"" + SettingsConstants.YOUNG_ANDROID_SETTINGS_USES_LOCATION +
-        "\":\"" + useslocation + "\",\"" + SettingsConstants.YOUNG_ANDROID_SETTINGS_APP_NAME +
-        "\":\"" + aName + "\"}}";
+        "\":\"" + useslocation + "\"}}";
   }
 
   /**
@@ -148,7 +146,7 @@ public final class YoungAndroidProjectService extends CommonProjectService {
    * @param vname the version name
    */
   public static String getProjectPropertiesFileContents(String projectName, String qualifiedName,
-    String icon, String vcode, String vname, String useslocation, String aname) {
+    String icon, String vcode, String vname, String useslocation) {
     String contents = "main=" + qualifiedName + "\n" +
         "name=" + projectName + '\n' +
         "assets=../" + ASSETS_FOLDER + "\n" +
@@ -166,9 +164,6 @@ public final class YoungAndroidProjectService extends CommonProjectService {
     if (useslocation != null && !useslocation.isEmpty()) {
       contents += "useslocation=" + useslocation + "\n";
     }
-    if (aname != null) {
-      contents += "aname=" + aname + "\n";
-    }
     return contents;
   }
 
@@ -180,7 +175,6 @@ public final class YoungAndroidProjectService extends CommonProjectService {
   @VisibleForTesting
   public static String getInitialFormPropertiesFileContents(String qualifiedName) {
     final int lastDotPos = qualifiedName.lastIndexOf('.');
-    String packageName = qualifiedName.split("\\.")[2];
     String formName = qualifiedName.substring(lastDotPos + 1);
     // The initial Uuid is set to zero here since (as far as we know) we can't get random numbers
     // in ode.shared.  This shouldn't actually matter since all Uuid's are random int's anyway (and
@@ -192,7 +186,7 @@ public final class YoungAndroidProjectService extends CommonProjectService {
         "{\"YaVersion\":\"" + YaVersion.YOUNG_ANDROID_VERSION + "\",\"Source\":\"Form\"," +
         "\"Properties\":{\"$Name\":\"" + formName + "\",\"$Type\":\"Form\"," +
         "\"$Version\":\"" + YaVersion.FORM_COMPONENT_VERSION + "\",\"Uuid\":\"" + 0 + "\"," +
-        "\"Title\":\"" + formName + "\",\"AppName\":\"" + packageName +"\"}}\n|#";
+        "\"Title\":\"" + formName + "\"}}\n|#";
   }
 
   /**
@@ -231,9 +225,6 @@ public final class YoungAndroidProjectService extends CommonProjectService {
     String newUsesLocation = Strings.nullToEmpty(settings.getSetting(
         SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
         SettingsConstants.YOUNG_ANDROID_SETTINGS_USES_LOCATION));
-    String newAName = Strings.nullToEmpty(settings.getSetting(
-        SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
-        SettingsConstants.YOUNG_ANDROID_SETTINGS_APP_NAME));
 
     // Extract the old icon from the project.properties file from storageIo.
     String projectProperties = storageIo.downloadFile(userId, projectId,
@@ -250,14 +241,13 @@ public final class YoungAndroidProjectService extends CommonProjectService {
     String oldVCode = Strings.nullToEmpty(properties.getProperty("versioncode"));
     String oldVName = Strings.nullToEmpty(properties.getProperty("versionname"));
     String oldUsesLocation = Strings.nullToEmpty(properties.getProperty("useslocation"));
-    String oldAName = Strings.nullToEmpty(properties.getProperty("aname"));
 
     if (!newIcon.equals(oldIcon) || !newVCode.equals(oldVCode) || !newVName.equals(oldVName)
-      || !newUsesLocation.equals(oldUsesLocation) || !newAName.equals(oldAName)) {
+      || !newUsesLocation.equals(oldUsesLocation)) {
       // Recreate the project.properties and upload it to storageIo.
       String projectName = properties.getProperty("name");
       String qualifiedName = properties.getProperty("main");
-      String newContent = getProjectPropertiesFileContents(projectName, qualifiedName, newIcon, newVCode, newVName, newUsesLocation, newAName);
+      String newContent = getProjectPropertiesFileContents(projectName, qualifiedName, newIcon, newVCode, newVName, newUsesLocation);
       storageIo.uploadFileForce(projectId, PROJECT_PROPERTIES_FILE_NAME, userId,
           newContent, StorageUtil.DEFAULT_CHARSET);
     }
@@ -276,7 +266,7 @@ public final class YoungAndroidProjectService extends CommonProjectService {
 
     String propertiesFileName = PROJECT_PROPERTIES_FILE_NAME;
     String propertiesFileContents = getProjectPropertiesFileContents(projectName,
-      qualifiedFormName, null, null, null, null, null);
+      qualifiedFormName, null, null, null, null);
 
     String formFileName = YoungAndroidFormNode.getFormFileId(qualifiedFormName);
     String formFileContents = getInitialFormPropertiesFileContents(qualifiedFormName);
@@ -296,7 +286,7 @@ public final class YoungAndroidProjectService extends CommonProjectService {
     project.addTextFile(new TextFile(yailFileName, yailFileContents));
 
     // Create new project
-    return storageIo.createProject(userId, project, getProjectSettings("", "1", "1.0", "false", projectName));
+    return storageIo.createProject(userId, project, getProjectSettings("", "1", "1.0", "false"));
   }
 
   @Override
@@ -317,9 +307,6 @@ public final class YoungAndroidProjectService extends CommonProjectService {
     String useslocation = oldSettings.getSetting(
         SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
         SettingsConstants.YOUNG_ANDROID_SETTINGS_USES_LOCATION);
-    String aname = oldSettings.getSetting(
-        SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
-        SettingsConstants.YOUNG_ANDROID_SETTINGS_APP_NAME);
 
     Project newProject = new Project(newName);
     newProject.setProjectType(YoungAndroidProjectNode.YOUNG_ANDROID_PROJECT_TYPE);
@@ -338,7 +325,7 @@ public final class YoungAndroidProjectService extends CommonProjectService {
         // name and qualified name.
         String qualifiedFormName = StringUtils.getQualifiedFormName(
             storageIo.getUser(userId).getUserEmail(), newName);
-        newContents = getProjectPropertiesFileContents(newName, qualifiedFormName, icon, vcode, vname, useslocation, aname);
+        newContents = getProjectPropertiesFileContents(newName, qualifiedFormName, icon, vcode, vname, useslocation);
       } else {
         // This is some file other than the project properties file.
         // oldSourceFileName may contain the old project name as a path segment, surrounded by /.
@@ -361,7 +348,7 @@ public final class YoungAndroidProjectService extends CommonProjectService {
     }
 
     // Create the new project and return the new project's id.
-    return storageIo.createProject(userId, newProject, getProjectSettings(icon, vcode, vname, useslocation, aname));
+    return storageIo.createProject(userId, newProject, getProjectSettings(icon, vcode, vname, useslocation));
   }
 
   @Override
@@ -462,6 +449,8 @@ public final class YoungAndroidProjectService extends CommonProjectService {
         storageIo.addSourceFilesToProject(userId, projectId, false, blocklyFileName);
         storageIo.uploadFileForce(projectId, blocklyFileName, userId, blocklyFileContents,
             StorageUtil.DEFAULT_CHARSET);
+        
+        // DEMO - dump initial file contents here
 
         String yailFileContents = "";  // start empty
         storageIo.addSourceFilesToProject(userId, projectId, false, yailFileName);
@@ -502,6 +491,91 @@ public final class YoungAndroidProjectService extends CommonProjectService {
     }
   }
 
+  // DEMO
+  // To do, need get build result as well, to tell client "done"
+  // and then need "get built web file" (= file exporter?)
+  public RpcResult buildWebOutput(User user, long projectId) {
+    String target = "web";
+    String userId = user.getUserId();
+    String projectName = storageIo.getProjectName(userId, projectId);
+    String outputFileDir = BUILD_FOLDER + "/" + target + "/";   // Note: forces a target
+    String demoFileName = "demopage.html";
+    String builtFileId = outputFileDir + demoFileName; 
+
+    LOG.info("DEMO: building web app file = " + builtFileId);    
+
+    String componentJSONFileId = null;
+    String componentJSON = null;
+    String componentJavaScript = null;  // ToDo: get this out of storage as well, once it's there
+    String componentJSFileId = null;  
+    
+    // Find component JSON file... 
+    // (and log source files)
+    for (String srcFileId : storageIo.getProjectSourceFiles(userId, projectId)) {
+      if (StorageUtil.isTextFile(srcFileId)) {  
+        // This will dump the *.scm,*.bky and *.yail files.
+        String fileContents = storageIo.downloadFile(userId, projectId, srcFileId, StorageUtil.DEFAULT_CHARSET);
+
+        // If we see an scm file - that's actually the component json
+        if (srcFileId.endsWith(".scm"))
+        {
+          // DEMO TODO: This assumes there is only one screen 
+          componentJSONFileId = srcFileId;
+          componentJSON = fileContents;
+        }
+        if (srcFileId.endsWith(".yail"))
+        {
+        	componentJSFileId = srcFileId;
+        	componentJavaScript = fileContents;
+        }
+        else {
+            LOG.info(srcFileId + ":  " + fileContents);        	
+        }
+      }
+      else {    		
+        LOG.info("DEMO: file is not of type text: " + srcFileId);
+      }    	  	
+    }
+    
+    // Delete the existing built html file, if any, so that future attempts to get it won't get
+    // old versions.
+    List<String> buildOutputFiles = storageIo.getProjectOutputFiles(userId, projectId);
+    for (String buildOutputFile : buildOutputFiles) {
+    	
+    	if (buildOutputFile.equalsIgnoreCase(builtFileId)) {
+    		storageIo.deleteFile(userId, projectId, buildOutputFile);
+    	}
+    }    
+ 
+    LOG.info(componentJSONFileId + ":  " + componentJSON); 
+    
+   String builtHtml = Shell.stitchBuildHTML(componentJavaScript, componentJSON);
+   
+   LOG.info("DEMO: Built html = " + builtHtml);
+     
+    // Save built file (add the id as an output file, then add the contents for that id)
+    LOG.info("DEMO: Storing web output" + builtFileId);
+    storageIo.addOutputFilesToProject(userId, projectId, builtFileId);
+    storageIo.uploadFileForce(projectId, builtFileId, userId, builtHtml, StorageUtil.DEFAULT_CHARSET);
+    
+    // Demo file is built.    
+    // File can be retrieved via FileExporterImpl or DownloadServlet
+    // (= project output for a web target)
+    
+    return new RpcResult(true, "Built web output for " + projectName, "");
+  }
+
+  
+  // DEMO - This always returns "yes file is built" so client then downloads the html
+  public RpcResult getWebBuildResult(User user, long projectId, String target) {
+	    target = "web";
+	    String userId = user.getUserId();
+	    //updateCurrentProgress(user, projectId, target);
+	    currentProgress = 100;
+	    RpcResult buildResult = new RpcResult(0, ""+currentProgress, ""); // Build finished
+	    return buildResult;
+  }
+
   /**
    * Make a request to the Build Server to build a project.  The Build Server will asynchronously
    * post the results of the build via the {@link com.google.appinventor.server.ReceiveBuildServlet}
@@ -520,6 +594,20 @@ public final class YoungAndroidProjectService extends CommonProjectService {
     String projectName = storageIo.getProjectName(userId, projectId);
     String outputFileDir = BUILD_FOLDER + '/' + target;
 
+    // Dump source files in storage for debug purposes
+    for (String srcFileId : storageIo.getProjectSourceFiles(userId, projectId)) {
+    	if (StorageUtil.isTextFile(srcFileId)) {           
+          String fileContents = storageIo.downloadFile(userId, projectId, srcFileId, StorageUtil.DEFAULT_CHARSET);
+          LOG.info("DEMO txt source = " + srcFileId + ":" + fileContents);
+    	}
+    	else {    		
+    		LOG.info("DEMO: file is not of type text: " + srcFileId);
+    	}    	  	
+    }
+    // DEMO: hack to try building html
+    // Uncomment this to try building the html
+    //buildWebOutput(user, projectId);
+    
     // Store the userId and projectId based on the nonce
 
     storageIo.storeNonce(nonce, userId, projectId);
@@ -528,7 +616,10 @@ public final class YoungAndroidProjectService extends CommonProjectService {
     // old versions.
     List<String> buildOutputFiles = storageIo.getProjectOutputFiles(userId, projectId);
     for (String buildOutputFile : buildOutputFiles) {
-      storageIo.deleteFile(userId, projectId, buildOutputFile);
+      if (!buildOutputFile.endsWith(".html")) {
+        storageIo.deleteFile(userId, projectId, buildOutputFile);
+        LOG.info("DEMO: skipping deleting html output");
+      }
     }
     URL buildServerUrl = null;
     ProjectSourceZip zipFile = null;

@@ -6,7 +6,6 @@ package com.google.appinventor.blocklyeditor;
 import java.io.IOException;
 import com.google.appinventor.blocklyeditor.BlocklyTestUtils;
 import com.google.appinventor.common.testutils.TestUtils;
-import com.google.appinventor.components.common.YaVersion;
 import junit.framework.TestCase;
 
 /**
@@ -26,8 +25,7 @@ public class BlocklyEvalTest extends TestCase {
 
     String[] params =
       { "phantomjs",
-        testpath + "/tests/com/google/appinventor/blocklyeditor/backgroundColorTest.js",
-        Integer.toString(YaVersion.BLOCKS_LANGUAGE_VERSION), Integer.toString(YaVersion.YOUNG_ANDROID_VERSION) };
+        testpath + "/tests/com/google/appinventor/blocklyeditor/backgroundColorTest.js" };
     String result = "";
 
     try {
@@ -43,8 +41,7 @@ public class BlocklyEvalTest extends TestCase {
 
     String[] params =
       { "phantomjs",
-        testpath + "/tests/com/google/appinventor/blocklyeditor/moleMashTest.js",
-        Integer.toString(YaVersion.BLOCKS_LANGUAGE_VERSION), Integer.toString(YaVersion.YOUNG_ANDROID_VERSION) };
+        testpath + "/tests/com/google/appinventor/blocklyeditor/moleMashTest.js" };
     String result = "";
 
     try {
@@ -60,8 +57,7 @@ public class BlocklyEvalTest extends TestCase {
 
     String[] params =
       { "phantomjs",
-        testpath + "/tests/com/google/appinventor/blocklyeditor/paintPotTest.js",
-        Integer.toString(YaVersion.BLOCKS_LANGUAGE_VERSION), Integer.toString(YaVersion.YOUNG_ANDROID_VERSION) };
+        testpath + "/tests/com/google/appinventor/blocklyeditor/paintPotTest.js" };
     String result = "";
 
     try {
@@ -77,8 +73,7 @@ public class BlocklyEvalTest extends TestCase {
 
     String[] params =
       { "phantomjs",
-        testpath + "/tests/com/google/appinventor/blocklyeditor/helloPurrTest.js",
-        Integer.toString(YaVersion.BLOCKS_LANGUAGE_VERSION), Integer.toString(YaVersion.YOUNG_ANDROID_VERSION) };
+        testpath + "/tests/com/google/appinventor/blocklyeditor/helloPurrTest.js" };
     String result = "";
 
     try {
@@ -94,8 +89,7 @@ public class BlocklyEvalTest extends TestCase {
 
     String[] params =
       { "phantomjs",
-        testpath + "/tests/com/google/appinventor/blocklyeditor/makeQuizTest.js",
-        Integer.toString(YaVersion.BLOCKS_LANGUAGE_VERSION), Integer.toString(YaVersion.YOUNG_ANDROID_VERSION) };
+        testpath + "/tests/com/google/appinventor/blocklyeditor/makeQuizTest.js" };
     String result = "";
 
     try {
@@ -111,8 +105,7 @@ public class BlocklyEvalTest extends TestCase {
 
     String[] params =
       { "phantomjs",
-        testpath + "/tests/com/google/appinventor/blocklyeditor/pictureCycleTest.js",
-        Integer.toString(YaVersion.BLOCKS_LANGUAGE_VERSION), Integer.toString(YaVersion.YOUNG_ANDROID_VERSION) };
+        testpath + "/tests/com/google/appinventor/blocklyeditor/pictureCycleTest.js" };
     String result = "";
 
     try {
@@ -128,8 +121,7 @@ public class BlocklyEvalTest extends TestCase {
 
     String[] params =
       { "phantomjs",
-        testpath + "/tests/com/google/appinventor/blocklyeditor/sensorTest.js",
-        Integer.toString(YaVersion.BLOCKS_LANGUAGE_VERSION), Integer.toString(YaVersion.YOUNG_ANDROID_VERSION) };
+        testpath + "/tests/com/google/appinventor/blocklyeditor/sensorTest.js" };
     String result = "";
 
     try {
@@ -145,8 +137,7 @@ public class BlocklyEvalTest extends TestCase {
 
     String[] params =
       { "phantomjs",
-        testpath + "/tests/com/google/appinventor/blocklyeditor/clockTest.js",
-        Integer.toString(YaVersion.BLOCKS_LANGUAGE_VERSION), Integer.toString(YaVersion.YOUNG_ANDROID_VERSION) };
+        testpath + "/tests/com/google/appinventor/blocklyeditor/clockTest.js" };
     String result = "";
 
     try {
@@ -162,8 +153,7 @@ public class BlocklyEvalTest extends TestCase {
 
     String[] params =
       { "phantomjs",
-        testpath + "/tests/com/google/appinventor/blocklyeditor/camcorderTest.js",
-        Integer.toString(YaVersion.BLOCKS_LANGUAGE_VERSION), Integer.toString(YaVersion.YOUNG_ANDROID_VERSION) };
+        testpath + "/tests/com/google/appinventor/blocklyeditor/camcorderTest.js" };
     String result = "";
 
     try {
@@ -179,8 +169,7 @@ public class BlocklyEvalTest extends TestCase {
 
     String[] params =
       { "phantomjs",
-        testpath + "/tests/com/google/appinventor/blocklyeditor/copyCatTest.js",
-        Integer.toString(YaVersion.BLOCKS_LANGUAGE_VERSION), Integer.toString(YaVersion.YOUNG_ANDROID_VERSION) };
+        testpath + "/tests/com/google/appinventor/blocklyeditor/copyCatTest.js" };
     String result = "";
 
     try {
@@ -196,8 +185,7 @@ public class BlocklyEvalTest extends TestCase {
 
     String[] params =
       { "phantomjs",
-        testpath + "/tests/com/google/appinventor/blocklyeditor/productLookupTest.js",
-        Integer.toString(YaVersion.BLOCKS_LANGUAGE_VERSION), Integer.toString(YaVersion.YOUNG_ANDROID_VERSION) };
+        testpath + "/tests/com/google/appinventor/blocklyeditor/productLookupTest.js" };
     String result = "";
 
     try {
@@ -213,8 +201,7 @@ public class BlocklyEvalTest extends TestCase {
 
     String[] params =
       { "phantomjs",
-        testpath + "/tests/com/google/appinventor/blocklyeditor/factorialTest.js",
-        Integer.toString(YaVersion.BLOCKS_LANGUAGE_VERSION), Integer.toString(YaVersion.YOUNG_ANDROID_VERSION) };
+        testpath + "/tests/com/google/appinventor/blocklyeditor/factorialTest.js" };
     String result = "";
 
     try {
@@ -230,8 +217,7 @@ public class BlocklyEvalTest extends TestCase {
 
     String[] params =
       { "phantomjs",
-        testpath + "/tests/com/google/appinventor/blocklyeditor/underscoreTest.js",
-        Integer.toString(YaVersion.BLOCKS_LANGUAGE_VERSION), Integer.toString(YaVersion.YOUNG_ANDROID_VERSION) };
+        testpath + "/tests/com/google/appinventor/blocklyeditor/underscoreTest.js" };
     String result = "";
 
     try {

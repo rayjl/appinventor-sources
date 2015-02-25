@@ -40,9 +40,14 @@ public class DownloadProjectOutputCommand extends ChainableCommand {
     return false;
   }
 
+  // DEMO - have a version where target = web?
+  
   @Override
   public void execute(ProjectNode node) {
+	  // DEMO: to try web output, download target = web
     Downloader.getInstance().download(ServerLayout.DOWNLOAD_SERVLET_BASE +
         ServerLayout.DOWNLOAD_PROJECT_OUTPUT + "/" + node.getProjectId() + "/" + target);
+//          ServerLayout.DOWNLOAD_PROJECT_OUTPUT + "/" + node.getProjectId() + "/" + "web");
+    		
   }
 }

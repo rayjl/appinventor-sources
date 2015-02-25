@@ -38,9 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import java.lang.Object;
-import java.io.PrintWriter;
-
 import static com.google.appinventor.client.Ode.MESSAGES;
 
 /**
@@ -553,6 +550,8 @@ public class BlocklyPanel extends HTMLPanel {
     }
   }
 
+
+
   /**
    * Get Yail code for current blocks workspace
    *
@@ -919,7 +918,6 @@ public class BlocklyPanel extends HTMLPanel {
   }-*/;
 
   public static native String doGetYail(String formName, String formJson, String packageName) /*-{
-    $wnd.console.log($wnd.Blocklies[formName].Yail.getFormYail(formJson, packageName));
     return $wnd.Blocklies[formName].Yail.getFormYail(formJson, packageName);
   }-*/;
 

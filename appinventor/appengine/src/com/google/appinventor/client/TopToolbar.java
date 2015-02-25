@@ -20,6 +20,9 @@ import com.google.appinventor.client.explorer.commands.SaveAllEditorsCommand;
 import com.google.appinventor.client.explorer.commands.ShowBarcodeCommand;
 import com.google.appinventor.client.explorer.commands.ShowProgressBarCommand;
 import com.google.appinventor.client.explorer.commands.WaitForBuildResultCommand;
+import com.google.appinventor.client.explorer.commands.WaitForBuildWebResultCommand;
+import com.google.appinventor.client.explorer.commands.BuildWebCommand;
+import com.google.appinventor.client.explorer.commands.DownloadWebOutputCommand;
 import com.google.appinventor.client.explorer.project.Project;
 import com.google.appinventor.client.output.OdeLog;
 import com.google.appinventor.client.tracking.Tracking;
@@ -34,11 +37,17 @@ import com.google.appinventor.client.wizards.youngandroid.NewYoungAndroidProject
 import com.google.appinventor.common.version.AppInventorFeatures;
 import com.google.appinventor.common.version.GitBuildId;
 import com.google.appinventor.components.common.YaVersion;
+import com.google.appinventor.shared.rpc.RpcResult;
 import com.google.appinventor.shared.rpc.ServerLayout;
+import com.google.appinventor.shared.rpc.project.ChecksumedFileException;
+import com.google.appinventor.shared.rpc.project.ChecksumedLoadFile;
 import com.google.appinventor.shared.rpc.project.ProjectRootNode;
 import com.google.appinventor.shared.rpc.project.youngandroid.YoungAndroidProjectNode;
+import com.google.appinventor.shared.rpc.webapp.WebAppUploadService;
+import com.google.appinventor.shared.rpc.webapp.WebAppUploadServiceAsync;
 import com.google.appinventor.shared.storage.StorageUtil;
 import com.google.common.collect.Lists;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.Location;
@@ -54,6 +63,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import java.util.List;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import static com.google.appinventor.client.Ode.MESSAGES;
 
@@ -84,6 +96,7 @@ public class TopToolbar extends Composite {
   private static final String WIDGET_NAME_CHECKPOINT = "Checkpoint";
   private static final String WIDGET_NAME_MY_PROJECTS = "MyProjects";
   private static final String WIDGET_NAME_BUILD = "Build";
+  private static final String WIDGET_NAME_BUILD_HTML_OUTPUT = "HTMLOutput";
   private static final String WIDGET_NAME_BUILD_BARCODE = "Barcode";
   private static final String WIDGET_NAME_BUILD_DOWNLOAD = "Download";
   private static final String WIDGET_NAME_BUILD_YAIL = "Yail";
@@ -91,6 +104,7 @@ public class TopToolbar extends Composite {
   private static final String WIDGET_NAME_WIRELESS_BUTTON = "Wireless";
   private static final String WIDGET_NAME_EMULATOR_BUTTON = "Emulator";
   private static final String WIDGET_NAME_USB_BUTTON = "Usb";
+  private static final String WIDGET_NAME_WEB_APP_BUTTON = "Live Web App";
   private static final String WIDGET_NAME_RESET_BUTTON = "Reset";
   private static final String WIDGET_NAME_HARDRESET_BUTTON = "HardReset";
   private static final String WIDGET_NAME_PROJECT = "Project";
@@ -111,7 +125,6 @@ public class TopToolbar extends Composite {
   private static final String WIDGET_NAME_ADMIN = "Admin";
   private static final String WIDGET_NAME_DOWNLOAD_USER_SOURCE = "DownloadUserSource";
   private static final String WIDGET_NAME_SWITCH_TO_DEBUG = "SwitchToDebugPane";
-
   private static final String WIDGET_NAME_GENERATE_JAVASCRIPT = "GenerateJavaScript";
   
   public DropDownButton fileDropDown;
@@ -174,12 +187,18 @@ public class TopToolbar extends Composite {
         MESSAGES.emulatorMenuItem(), new EmulatorAction()));
     connectItems.add(new DropDownItem(WIDGET_NAME_USB_BUTTON, MESSAGES.usbMenuItem(),
         new UsbAction()));
+    connectItems.add(new DropDownItem(WIDGET_NAME_WEB_APP_BUTTON, MESSAGES.webAppMenuItem(),
+        new webAppAction()));
     connectItems.add(null);
     connectItems.add(new DropDownItem(WIDGET_NAME_RESET_BUTTON, MESSAGES.resetConnectionsMenuItem(),
         new ResetAction()));
     connectItems.add(new DropDownItem(WIDGET_NAME_HARDRESET_BUTTON, MESSAGES.hardResetConnectionsMenuItem(),
         new HardResetAction()));
 
+    // Demo...
+    buildItems.add(new DropDownItem(WIDGET_NAME_BUILD_HTML_OUTPUT, MESSAGES.buildHTMLOutputMenuItem(),
+   	     new HTMLOutputAction()));
+    
     // Build -> {Show Barcode; Download to Computer; Generate YAIL only when logged in as an admin}
     buildItems.add(new DropDownItem(WIDGET_NAME_BUILD_BARCODE, MESSAGES.showBarcodeMenuItem(),
         new BarcodeAction()));
@@ -192,11 +211,7 @@ public class TopToolbar extends Composite {
     }
     buildItems.add(new DropDownItem(WIDGET_NAME_GENERATE_JAVASCRIPT, MESSAGES.toJavaScript(),
     		new GenerateJavaScriptAction()));
-
-
-
-
-
+    
     // Help -> {About, Library, Get Started, Tutorials, Troubleshooting, Forums, Report an Issue}
     helpItems.add(new DropDownItem(WIDGET_NAME_ABOUT, MESSAGES.aboutMenuItem(),
         new AboutAction()));
@@ -344,6 +359,92 @@ public class TopToolbar extends Composite {
     }
   }
 
+  private class webAppAction implements Command {
+
+    // This loads html to the live web app servlet
+    private void doWebAppUpload(final String fileName, String fileData) {
+      final AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+        @Override
+        public void onFailure(Throwable caught) {
+          OdeLog.log(MESSAGES.webAppUploadError());
+        }
+        @Override
+        public void onSuccess(Void msg) {
+            OdeLog.log("Built html loaded as live web app");
+            Window.open(ServerLayout.genRelativeWebAppLaunchPath(fileName), "test", "scrollbars=1");
+            
+        }
+      };
+      Ode.getInstance().getWebAppUploadService().uploadFile(fileName, fileData, callback);
+    }
+
+    // This builds the html for the app, and then on success, 
+    // gets the built html and loads it to the web app upload servlet
+    private void buildHtmlAndLoad()
+    {     	
+      final AsyncCallback<RpcResult> buildCallback = new AsyncCallback<RpcResult>() {
+        @Override
+        public void onFailure(Throwable caught) {
+          OdeLog.log("Error building for live edit");
+        }
+        @Override
+        public void onSuccess(RpcResult result) {
+          OdeLog.log("Build done for live edit");
+
+          // Now get the html and load it
+          getHtmlAndLoad(Ode.getInstance().getCurrentYoungAndroidProjectId());
+        }
+      };  
+
+      String nonce = Ode.getInstance().generateNonce();
+        final Ode ode = Ode.getInstance();
+        ode.lockScreens(true);      // Lock out screen switching
+        ode.getEditorManager().saveDirtyEditors(null);
+        ode.lockScreens(false); // Screen switch OK now
+        Ode.getInstance().getEditorManager().generateJavaScriptForBlocksEditors(null, null);
+        Ode.getInstance().getProjectService().buildDemo(Ode.getInstance().getCurrentYoungAndroidProjectId(), nonce, "web", buildCallback);
+    }
+
+    private void getHtmlAndLoad(long projectId) {
+      final String builtHtmlFileId = "build/web/demopage.html";  // hardcoded for now, matches build web output file
+
+      // Might not need the checksumed load here
+      OdeAsyncCallback<ChecksumedLoadFile> callback = new OdeAsyncCallback<ChecksumedLoadFile>(MESSAGES.loadError()) {
+        @Override
+        public void onSuccess(ChecksumedLoadFile result) {
+          // We built successfully...
+          try {
+            String fileContents = result.getContent();
+            OdeLog.log("Built html file contents loaded, size = " + fileContents.length());
+
+            // upload the file contents here...
+            doWebAppUpload("livewebapp.html", fileContents);  // needs to match webupload file
+          } catch (ChecksumedFileException e) {
+
+            OdeLog.log("Could not load file for live edit");                
+          }             
+        }
+        @Override
+        public void onFailure(Throwable caught) {
+          // Note that in this case, we will load the default html = "can't load"
+          OdeLog.log("Could not download html file");
+        }
+      };
+      Ode.getInstance().getProjectService().load2(projectId, builtHtmlFileId, callback);
+    }
+
+    @Override
+    public void execute() {
+        
+      final String fileName = "livewebapp.html";
+      if (Ode.getInstance().okToConnect()) {
+
+        buildHtmlAndLoad();
+          
+      }
+    }
+  }
+
   private class ResetAction implements Command {
     @Override
     public void execute() {
@@ -362,6 +463,32 @@ public class TopToolbar extends Composite {
     }
   }
 
+  public class HTMLOutputAction implements Command {
+	    @Override
+	    public void execute() {
+	      ProjectRootNode projectRootNode = Ode.getInstance().getCurrentYoungAndroidProjectRootNode();
+	      if (projectRootNode != null) {
+	        String target = YoungAndroidProjectNode.YOUNG_ANDROID_TARGET_ANDROID;
+	        ChainableCommand cmd = new SaveAllEditorsCommand(
+	            new GenerateJavaScriptCommand(
+	                new BuildWebCommand(target,
+	                		new DownloadWebOutputCommand(target))));
+	                     /* new ShowProgressBarCommand(target,
+	                        new WaitForBuildWebResultCommand(target,
+	                            new DownloadWebOutputCommand(target)), "DownloadAction"))  )); */
+//	        updateBuildButton(true);
+	        cmd.startExecuteChain(Tracking.PROJECT_ACTION_BUILD_DOWNLOAD_YA, projectRootNode,
+	            new Command() {
+	              @Override
+	              public void execute() {
+//	                updateBuildButton(false);
+	              }
+	            });
+	      }
+	    }
+	  }
+
+  
   private class BarcodeAction implements Command {
     @Override
     public void execute() {
@@ -409,6 +536,7 @@ public class TopToolbar extends Composite {
       }
     }
   }
+  
   private static class ExportProjectAction implements Command {
     @Override
     public void execute() {
@@ -648,30 +776,24 @@ public class TopToolbar extends Composite {
     }
   }
   
-  
-
-
   private class GenerateJavaScriptAction implements Command {
-    @Override
-    public void execute() {
-      ProjectRootNode projectRootNode = Ode.getInstance().getCurrentYoungAndroidProjectRootNode();
-      if (projectRootNode != null) {
-        String target = YoungAndroidProjectNode.YOUNG_ANDROID_TARGET_ANDROID;
-        ChainableCommand cmd = new SaveAllEditorsCommand(new GenerateJavaScriptCommand(null));
-        //updateBuildButton(true);
-        cmd.startExecuteChain(Tracking.PROJECT_ACTION_BUILD_YAIL_YA, projectRootNode,
-            new Command() {
-              @Override
-              public void execute() {
-                //updateBuildButton(false);
-              }
-            });
-      }
-    }
-  }
-
-
-
+	    @Override
+	    public void execute() {
+	      ProjectRootNode projectRootNode = Ode.getInstance().getCurrentYoungAndroidProjectRootNode();
+	      if (projectRootNode != null) {
+	        String target = YoungAndroidProjectNode.YOUNG_ANDROID_TARGET_ANDROID;
+	        ChainableCommand cmd = new SaveAllEditorsCommand(new GenerateJavaScriptCommand(null));
+	        //updateBuildButton(true);
+	        cmd.startExecuteChain(Tracking.PROJECT_ACTION_BUILD_YAIL_YA, projectRootNode,
+	            new Command() {
+	              @Override
+	              public void execute() {
+	                //updateBuildButton(false);
+	              }
+	            });
+	      }
+	    }
+	  }
 
   private static class AboutAction implements Command {
     @Override
@@ -922,5 +1044,4 @@ public class TopToolbar extends Composite {
       Ode.getInstance().switchToDebuggingView();
     }
   }
-
 }

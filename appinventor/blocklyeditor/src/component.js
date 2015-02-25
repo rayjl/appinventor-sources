@@ -136,12 +136,11 @@ Blockly.Component.buildComponentMap = function(warnings, errors, forRepl, compil
 
     // TODO: deal with unattached blocks that are not valid top-level definitions. Valid blocks
     // are events, variable definitions, or procedure definitions.
+
     if (!block.category) {
       continue;
     }
     if (block.type == 'procedures_defnoreturn' || block.type == 'procedures_defreturn' || block.type == 'global_declaration') {
-    // if (block.category != 'Component') {
-    //  console.log(block + ' Not a Component or a top level block, pushing to globalBlocks');
       map.globals.push(block);
       // TODO: eventually deal with variable declarations, once we have them
     } else if (block.category == 'Component') {
@@ -159,11 +158,6 @@ Blockly.Component.buildComponentMap = function(warnings, errors, forRepl, compil
       map.components[instanceName].push(block);
     }
   }
-  // console.log('map.components : ');
-  // console.log(map.components);
-  // console.log('map.globals : ');
-  // console.log(map.globals);
-  // console.log('\n');
   return map;
 };
 

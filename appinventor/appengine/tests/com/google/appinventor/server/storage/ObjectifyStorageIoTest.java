@@ -321,22 +321,19 @@ public class ObjectifyStorageIoTest extends LocalDatastoreTestCase {
     storage.addSourceFilesToProject(USER_ID, projectId, true, FILE_NAME1);
     assertTrue(storage.getProjectSourceFiles(USER_ID, projectId).contains(FILE_NAME1));
     modificationDate = storage.getProjectDateModified(USER_ID, projectId);
-    // Note: Modification date will not change due to restrictions where we only
-    // update project modification date if it is more then a minute since the last
-    // update.
-    assertTrue(oldModificationDate <= modificationDate);
+    assertTrue(oldModificationDate < modificationDate);
     oldModificationDate = modificationDate;
 
     storage.removeSourceFilesFromProject(USER_ID, projectId, true, FILE_NAME1);
     assertFalse(storage.getProjectSourceFiles(USER_ID, projectId).contains(FILE_NAME1));
     modificationDate = storage.getProjectDateModified(USER_ID, projectId);
-    assertTrue(oldModificationDate <= modificationDate);
+    assertTrue(oldModificationDate < modificationDate);
     oldModificationDate = modificationDate;
 
     storage.addSourceFilesToProject(USER_ID, projectId, false, FILE_NAME1);
     modificationDate = storage.uploadFile(projectId, FILE_NAME1, USER_ID, FILE_CONTENT1,
         StorageUtil.DEFAULT_CHARSET);
-    assertTrue(oldModificationDate <= modificationDate);
+    assertTrue(oldModificationDate < modificationDate);
     oldModificationDate = modificationDate;
     modificationDate = storage.getProjectDateModified(USER_ID, projectId);
     assertEquals(oldModificationDate, modificationDate);
@@ -345,7 +342,7 @@ public class ObjectifyStorageIoTest extends LocalDatastoreTestCase {
     storage.addOutputFilesToProject(USER_ID, projectId, FILE_NAME_OUTPUT);
     modificationDate = storage.uploadRawFile(projectId, FILE_NAME_OUTPUT, USER_ID,
         true, FILE_CONTENT_OUTPUT);
-    assertTrue(oldModificationDate <= modificationDate);
+    assertTrue(oldModificationDate < modificationDate);
     oldModificationDate = modificationDate;
     modificationDate = storage.getProjectDateModified(USER_ID, projectId);
     assertEquals(oldModificationDate, modificationDate);
@@ -353,7 +350,7 @@ public class ObjectifyStorageIoTest extends LocalDatastoreTestCase {
 
 
     modificationDate = storage.deleteFile(USER_ID, projectId, FILE_NAME1);
-    assertTrue(oldModificationDate <= modificationDate);
+    assertTrue(oldModificationDate < modificationDate);
     oldModificationDate = modificationDate;
     modificationDate = storage.getProjectDateModified(USER_ID, projectId);
     assertEquals(oldModificationDate, modificationDate);
@@ -585,10 +582,10 @@ public class ObjectifyStorageIoTest extends LocalDatastoreTestCase {
     }
 
     @Override
-    void runJobWithRetries(JobRetryHelper job, boolean useTransaction) throws ObjectifyException {
+    void runJobWithRetries(JobRetryHelper job) throws ObjectifyException {
       ++run;
       if (run != failingRun) {
-        super.runJobWithRetries(job, useTransaction);
+        super.runJobWithRetries(job);
       } else {
         throw new ObjectifyException("job failed (on purpose)");
       }

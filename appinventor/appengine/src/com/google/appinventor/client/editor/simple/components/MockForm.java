@@ -123,7 +123,6 @@ public final class MockForm extends MockContainer {
   private static final String PROPERTY_NAME_ICON = "Icon";
   private static final String PROPERTY_NAME_VCODE = "VersionCode";
   private static final String PROPERTY_NAME_VNAME = "VersionName";
-  private static final String PROPERTY_NAME_ANAME = "AppName";
 
   // Form UI components
   AbsolutePanel formWidget;
@@ -335,11 +334,6 @@ public final class MockForm extends MockContainer {
       return editor.isScreen1();
     }
 
-    if (propertyName.equals(PROPERTY_NAME_ANAME)) {
-      // The AppName property actually applies to the application and is only visible on Screen1.
-      return editor.isScreen1();
-    }
-
     return super.isPropertyVisible(propertyName);
   }
 
@@ -426,16 +420,6 @@ public final class MockForm extends MockContainer {
       editor.getProjectEditor().changeProjectSettingsProperty(
           SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
           SettingsConstants.YOUNG_ANDROID_SETTINGS_VERSION_NAME, vname);
-    }
-  }
-
-  private void setANameProperty(String aname) {
-    // The AppName property actually applies to the application and is only visible on Screen1.
-    // When we load a form that is not Screen1, this method will be called with the default value
-    if (editor.isScreen1()) {
-      editor.getProjectEditor().changeProjectSettingsProperty(
-          SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
-          SettingsConstants.YOUNG_ANDROID_SETTINGS_APP_NAME, aname);
     }
   }
 
@@ -630,10 +614,9 @@ public final class MockForm extends MockContainer {
       setIconProperty(newValue);
     } else if (propertyName.equals(PROPERTY_NAME_VCODE)) {
       setVCodeProperty(newValue);
-    } else if (propertyName.equals(PROPERTY_NAME_VNAME)) {
+    }
+    else if (propertyName.equals(PROPERTY_NAME_VNAME)) {
       setVNameProperty(newValue);
-    } else if (propertyName.equals(PROPERTY_NAME_ANAME)) {
-      setANameProperty(newValue);
     } else if (propertyName.equals(PROPERTY_NAME_HORIZONTAL_ALIGNMENT)) {
       myLayout.setHAlignmentFlags(newValue);
       refreshForm();

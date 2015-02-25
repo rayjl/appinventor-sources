@@ -300,14 +300,8 @@ public class YaVersion {
   // For YOUNG_ANDROID_VERSION 113:
   // Second test of new upgrading architecture: Evan Thomas's fillCircle argument for Canvas.DrawCircle
   // - CANVAS_COMPONENT_VERSION was incremented to 9.
-  // For YOUNG_ANDROID_VERSION 114:
-  // - FORM_COMPONENT_VERSION was incremented to 14.
-  // For YOUNG_ANDROID_VERSION 115:
-  // - CANVAS_COMPONENT_VERSION was incremented to 10.
-  // For YOUNG_ANDROID_VERSION 116:
-  // - LISTPICKER_COMPONENT_VERSION was incremented to 9.
 
-  public static final int YOUNG_ANDROID_VERSION = 116;
+  public static final int YOUNG_ANDROID_VERSION = 113;
 
   // ............................... Blocks Language Version Number ...............................
 
@@ -498,9 +492,7 @@ public class YaVersion {
   // - Dragged parameter draggedSprite name changed to draggedAnySprite
   // For CANVAS_COMPONENT_VERSION 9:
   // - DrawCircle has new fourth parameter (for isFilled), due to Evan Thomas
-  // For CANVAS_COMPONENT_VERSION 10:
-  // - The default value of the TextAlignment property was changed to Component.ALIGNMENT_CENTER
-  public static final int CANVAS_COMPONENT_VERSION = 10;
+  public static final int CANVAS_COMPONENT_VERSION = 9;
 
   // For CHECKBOX_COMPONENT_VERSION 2:
   // - The Value property was renamed to Checked.
@@ -519,7 +511,7 @@ public class YaVersion {
   // - For Eclair and up, we now use ContactsContract instead of the deprecated Contacts.
   public static final int CONTACTPICKER_COMPONENT_VERSION = 5;
 
-  // For DATEPICKER_COMPONENT_VERSION 2:
+   // For DATEPICKER_COMPONENT_VERSION 2:
   // The datepicker dialog was updated to show the current date
   // instead of the last set date by default.
   // The SetDateToDisplay and LaunchPicker methods were added to
@@ -561,9 +553,7 @@ public class YaVersion {
   // - AboutScreen property was added
   // For FORM_COMPONENT_VERSION 13:
   // - The Screen.Scrollable property was set to False by default
-  // For FORM_COMPONENT_VERSION 14:
-  // - The Screen1.AppName was added and no block need to be changed.
-  public static final int FORM_COMPONENT_VERSION = 14;
+  public static final int FORM_COMPONENT_VERSION = 13;
 
   // For FUSIONTABLESCONTROL_COMPONENT_VERSION 2:
   // - The Fusiontables API was migrated from SQL to V1
@@ -628,9 +618,8 @@ public class YaVersion {
   // - Added ShowFilterBar property
   // For LISTPICKER_COMPONENT_VERSION 8:
   // - Added title property
-  // For LISTPICKER_COMPONENT_VERSION 9:
-  // - Added ItemTextColor, ItemBackgroundColor
-  public static final int LISTPICKER_COMPONENT_VERSION = 9;
+
+  public static final int LISTPICKER_COMPONENT_VERSION = 8;
 
   // For LISTVIEW_COMPONENT_VERSION 1:
   // - Initial version.

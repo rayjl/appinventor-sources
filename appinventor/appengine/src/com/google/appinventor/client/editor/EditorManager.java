@@ -30,9 +30,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import java.lang.Object;
-import java.io.*;
-
 /**
  * Manager class for opened project editors.
  *
@@ -319,6 +316,7 @@ public final class EditorManager {
         break;
       }
     }
+   
     Ode.getInstance().getProjectService().save(Ode.getInstance().getSessionId(),
         yailFiles,
         new OdeAsyncCallback<Long>(MESSAGES.saveErrorMultipleFiles()) {

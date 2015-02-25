@@ -20,8 +20,6 @@
 
 var formJson = "";
 var componentTypes = {};
-var YOUNG_ANDROID_VERSION;
-var BLOCKS_LANGUAGE_VERSION;
 
 function start() {
 
@@ -120,8 +118,8 @@ function start() {
   // [lyn, 2015/01/02] Needed by the upgrader in versioning.js
   // Is there a way to get the actual current version number?
 
-  window.parent.BlocklyPanel_getBlocksLanguageVersion = function () { return BLOCKS_LANGUAGE_VERSION; }
-  window.parent.BlocklyPanel_getYaVersion = function() { return YOUNG_ANDROID_VERSION; }
+  window.parent.BlocklyPanel_getBlocksLanguageVersion = function () { return 18; }
+
 
   // ----- End the Mock locale operations
 
@@ -197,11 +195,6 @@ function handleLoadForm(event) {
         }
     };
     reader.readAsText(files[0]);
-}
-
-function processVersion(bl, yav) {
-    BLOCKS_LANGUAGE_VERSION = bl;
-    YOUNG_ANDROID_VERSION = yav;
 }
 
 function processBlocks(formJsonString, blocks){ // [lyn, 2015/01/01] Modified to handled upgrader changes

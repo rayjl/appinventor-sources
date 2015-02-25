@@ -167,7 +167,6 @@ public class TranslationComponentProperty {
     map.put("Speed", MESSAGES.SpeedProperties());
     map.put("StopBeforeDisconnect", MESSAGES.StopBeforeDisconnectProperties());
     map.put("Text", MESSAGES.TextProperties());
-    map.put("TextAlignment", MESSAGES.TextAlignmentProperties());
     map.put("TextColor", MESSAGES.TextColorProperties());
     map.put("TimeInterval", MESSAGES.TimeIntervalProperties());
     map.put("TimerAlwaysFires", MESSAGES.TimerAlwaysFiresProperties());
@@ -226,10 +225,6 @@ public class TranslationComponentProperty {
     map.put("MaximumRange", MESSAGES.MaximumRangeProperties());
     map.put("KeepRunningWhenOnPause", MESSAGES.KeepRunningWhenOnPauseProperties());
     map.put("ProximityChanged", MESSAGES.ProximityChangedPropertiesProperties());
-
-    // ========== ListPicker
-    map.put("ItemTextColor", MESSAGES.ItemTextColorProperties());
-    map.put("ItemBackgroundColor", MESSAGES.ItemBackgroundColorProperties());
 
     return map;
   }

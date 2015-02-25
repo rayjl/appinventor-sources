@@ -11,7 +11,6 @@ import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -81,7 +80,6 @@ public final class Project {
   private static final String ASSETSTAG = "assets";
   private static final String BUILDTAG = "build";
   private static final String USESLOCATIONTAG = "useslocation";
-  private static final String ANAMETAG = "aname";
 
   // Table containing project properties
   private Properties properties;
@@ -241,31 +239,6 @@ public final class Project {
     if (retval == null)         // Older Projects won't have this
       retval = "False";
     return retval;
-  }
-
-  /**
-   * Returns the app name.
-   *
-   * @return  app name
-   */
-  public String getAName() {
-    //The non-English character set can't be shown properly and need special encoding.
-    String appName = properties.getProperty(ANAMETAG);
-    try {
-      appName = new String(appName.getBytes("ISO-8859-1"), "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-    } catch (NullPointerException e) {
-    }
-    return appName;
-  }
-
-  /**
-   * Sets the app name.
-   *
-   * @param aname  app name
-   */
-  public void setAName(String aname) {
-    properties.setProperty(ANAMETAG, aname);
   }
 
   /**
